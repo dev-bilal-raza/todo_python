@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "fastapi-with-neon"
+version = "0.1.0"
+description = ""
+authors = ["Bilal Raza <success9262@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+sqlmodel = "^0.0.16"
+psycopg2 = "^2.9.9"
+fastapi = "^0.110.0"
+uvicorn = {extras = ["standard"], version = "^0.28.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
