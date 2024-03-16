@@ -1,7 +1,6 @@
-from fastapi import FastAPI, Body
-from pydantic import BaseModel
+from fastapi import (FastAPI, Body, HTTPException)
 from typing import Annotated
-from .db_controllers import add_todo, delete_todo, complete_todo
+from .db_controllers import (add_todo, delete_todo, complete_todo, get_todos)
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -25,7 +24,10 @@ app.add_middleware(
 
 @app.get("/")
 async def main():
-    return {"message": "Hello World"}
+    todos = get_todos()
+    if not type(todos) == str:
+        return todos
+    raise HTTPException(status_code=404, detail=todos)
 
 
 @app.post("/createTodo")
@@ -36,23 +38,18 @@ async def createTodo(todo: Annotated[str, Body()]):
     return "Todo not found"
 
 
-@app.post("/deleteTodo")
-async def deleteTodo(todo_id: Annotated[int, Body()]):
-    todos: list[dict] = delete_todo(todo_id)
-    if todos:
+@app.delete("/deleteTodo")
+async def deleteTodo(todo_id: int):
+    todos= delete_todo(todo_id)
+    if not type(todos) == str:
         return todos
-    return "Todo not found"
+    raise HTTPException(status_code=404, detail=todos)
 
 
-class CompletedTodo(BaseModel):
-    todo_id: int
-    todo_status: bool
-
-
-@app.post("/completeTodo")
-async def completeTodo(todo_details: CompletedTodo):
-    todos: list[dict] = complete_todo(
-        todo_details.todo_id, todo_details.todo_status)
-    if todos:
+@app.put("/completeTodo/{todo_id}")
+async def completeTodo(todo_id: int, todo_status: Annotated[bool, Body()]):
+    todos: list[dict] | str = complete_todo(
+        todo_id, todo_status)
+    if not type(todos) == str:
         return todos
-    return "Todo not found"
+    raise HTTPException(status_code=404, detail=todos)

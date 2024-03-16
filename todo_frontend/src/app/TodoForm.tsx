@@ -7,9 +7,8 @@ import useTodo from './context/TodoProvider'
 
 const TodoForm = () => {
   const { setTodo } = useTodo()
-
   const ref = useRef<HTMLInputElement>(null);
-  // const [todo, settodo] = useState<Todo[]>([])
+  
   const formSubmit = async (f: FormEvent) => {
     f.preventDefault();
     const input_value: string = ref.current!.value;
@@ -21,9 +20,9 @@ const TodoForm = () => {
       },
       body: JSON.stringify(input_value)
     })
-    const data: Todo[] = await response.json()
-    if (data) {
-      setTodo(data)
+    const todos: Todo[] = await response.json()
+    if (todos) {
+      setTodo(todos)
     }
 
   }
