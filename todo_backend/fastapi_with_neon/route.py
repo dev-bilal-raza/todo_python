@@ -10,8 +10,6 @@ from .const import origins
 
 # Define an asynchronous context manager for application lifespan
 # This logic will be executed once before the application starts receiving requests
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     db_connector()  # Initialize database connection
@@ -31,15 +29,12 @@ app.add_middleware(
 )
 
 # Define main endpoint returning a welcome message
-
-
 @app.get("/")
 def main():
     return {"Home": "Welcome to the FasApi Project!"}
 
+
 # Endpoint to retrieve all todos
-
-
 @app.get("/gettodos")
 async def getTodo(session: Annotated[Session, Depends(get_session)]):
     todos = get_todos(session)
@@ -47,9 +42,8 @@ async def getTodo(session: Annotated[Session, Depends(get_session)]):
         return todos
     raise HTTPException(status_code=404, detail=todos)
 
+
 # Endpoint to create a new todo
-
-
 @app.post("/createTodo")
 async def createTodo(todo: Annotated[str, Body()], session: Annotated[Session, Depends(get_session)]):
     todos: list[dict] = add_todo(todo, session)
@@ -57,9 +51,8 @@ async def createTodo(todo: Annotated[str, Body()], session: Annotated[Session, D
         return todos
     return "Todo not found"
 
+
 # Endpoint to delete a todo
-
-
 @app.delete("/deleteTodo")
 async def deleteTodo(todo_id: int, session: Annotated[Session, Depends(get_session)]):
     todos = delete_todo(todo_id, session)
@@ -67,9 +60,8 @@ async def deleteTodo(todo_id: int, session: Annotated[Session, Depends(get_sessi
         return todos
     raise HTTPException(status_code=404, detail=todos)
 
+
 # Endpoint to mark a todo as completed
-
-
 @app.put("/completeTodo/{todo_id}")
 async def completeTodo(todo_id: int, todo_status: Annotated[bool, Body()], session: Annotated[Session, Depends(get_session)]):
     todos: list[dict] | str = complete_todo(todo_id, todo_status, session)
