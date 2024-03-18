@@ -1,30 +1,30 @@
 "use client"
-import { FormEvent, useRef } from 'react'
+import { FormEvent, Suspense, useRef, useState } from 'react'
 import TodoItem from './TodoItem'
 import React from 'react'
 import { Todo } from '@/components/interfaces'
 import useTodo from './context/TodoProvider'
+import Loading from './loading'
 
 const TodoForm = () => {
   const { setTodo } = useTodo()
-  const ref = useRef<HTMLInputElement>(null);
-  
+  const [inputValue, setInput] = useState("");
+
   const formSubmit = async (f: FormEvent) => {
     f.preventDefault();
-    const input_value: string = ref.current!.value;
     const response = await fetch("http://localhost:8000/createTodo", {
       method: "POST",
       headers: {
         "request-mode": "no cors",
         "content-type": "application/json"
       },
-      body: JSON.stringify(input_value)
+      body: JSON.stringify(inputValue)
     })
     const todos: Todo[] = await response.json()
     if (todos) {
       setTodo(todos)
+      setInput("")
     }
-
   }
   return (
     <div className='flex flex-col items-center gap-10'>
@@ -37,7 +37,8 @@ const TodoForm = () => {
             className='w-[20vw] border-black/10 outline-none duration-150 bg-white/20 rounded-l-lg px-3 py-1.5 '
             type="text"
             placeholder='Write Todo'
-            ref={ref}
+            value={inputValue}
+            onChange={(e) => setInput(e.target.value)}
           />
           <button className='rounded-r-lg px-3 py-1 bg-green-600 hover:bg-green-500 text-white shrink-0' type='submit'> Add</button>
         </div>
