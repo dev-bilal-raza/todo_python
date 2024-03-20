@@ -1,7 +1,7 @@
 # Import necessary modules
 from fastapi import (FastAPI, Body, HTTPException, Depends)
 from typing import Annotated
-from .db_controllers import (add_todo, delete_todo, complete_todo, get_todos)
+from .db_controllers import (add_todo, delete_todo, complete_todo, get_todos, upadate_todo)
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
 from contextlib import asynccontextmanager
@@ -10,6 +10,8 @@ from .const import origins
 
 # Define an asynchronous context manager for application lifespan
 # This logic will be executed once before the application starts receiving requests
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     db_connector()  # Initialize database connection
@@ -29,6 +31,8 @@ app.add_middleware(
 )
 
 # Define main endpoint returning a welcome message
+
+
 @app.get("/")
 def main():
     return {"Home": "Welcome to the FasApi Project!"}
@@ -68,3 +72,9 @@ async def completeTodo(todo_id: int, todo_status: Annotated[bool, Body()], sessi
     if not type(todos) == str:
         return todos
     raise HTTPException(status_code=404, detail=todos)
+
+
+@app.put("/updateTodo/{todo_id}")
+async def update_todo(todo_id: int, todo_name: Annotated[str, Body()], session: Annotated[Session, Depends(get_session)]):
+    message = upadate_todo(todo_id, todo_name, session)
+    return message

@@ -1,15 +1,15 @@
 # Import necessary modules
 from sqlmodel import SQLModel, Session
-from .const import DB_URL, TEST_DB_URL
+from .const import db_connction_str, test_db_connction_str
 from sqlmodel import create_engine
 from sqlmodel.pool import StaticPool
 
 # Creating engine for connecting to the main database
-db_engine = create_engine(DB_URL, connect_args={
+db_engine = create_engine(db_connction_str, connect_args={
     "sslmode": "require"}, pool_recycle=300)
 
 # Creating engine for connecting to the test database
-testdb_engine = create_engine(TEST_DB_URL,connect_args={
+testdb_engine = create_engine(test_db_connction_str,connect_args={
     "sslmode": "require"}, poolclass=StaticPool)
 
 # Function to initialize database tables for the main database

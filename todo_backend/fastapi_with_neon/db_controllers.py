@@ -3,9 +3,12 @@ from sqlmodel import Session, select
 from .db_structure import Todo
 
 # ================================= Function to retrieve all todos from the database ========================================
+
+
 def get_todos(session: Session):
     # Execute a select query to retrieve all todos
-    allTodos = session.exec(select(Todo)).all()
+    table_lang = select(Todo)
+    allTodos = session.exec(table_lang).all()
     # If no todos found, return a message
     if not allTodos:
         return "Todos not found. \n Please Try Again..."
@@ -26,12 +29,12 @@ def add_todo(todo: str, session: Session):
     session.refresh(db_todo)
     # Retrieve all todos from the database
     allTodos = session.exec(select(Todo)).all()
-        
+
     # print("=============================================================")
     # print("All Todos")
     # print(allTodos)
     # print("=============================================================")
-   
+
     # Return all todos
     return allTodos
 # ===========================================================================================================================
@@ -41,7 +44,7 @@ def add_todo(todo: str, session: Session):
 def complete_todo(id: int, todo_status: bool, session: Session):
     # table = select(Todo).where(Todo.todo_id == id)
     # todo = session.exec(table).one()
-    
+
     # Retrieve the todo object with the given ID
     todo = session.get(Todo, id)
     # If no todo found, return a message
@@ -56,13 +59,13 @@ def complete_todo(id: int, todo_status: bool, session: Session):
     # Refresh the todo object to get its updated state from the database
     session.refresh(todo)
     # Retrieve all todos from the database
-    allTodos = session.exec(select(Todo)).all()    
-   
+    allTodos = session.exec(select(Todo)).all()
+
     # print("=============================================================")
     # print("All Todos")
     # print(allTodos)
     # print("=============================================================")
-   
+
     # Return all todos
     return allTodos
 # ===========================================================================================================================
@@ -81,12 +84,23 @@ def delete_todo(id: int, session: Session):
     session.commit()
     # Retrieve all todos from the database
     allTodos = session.exec(select(Todo)).all()
-    
+
     # print("=============================================================")
     # print("All Todos")
     # print(allTodos)
     # print("=============================================================")
-    
+
     # Return all todos
     return allTodos
 # ===========================================================================================================================
+
+
+def upadate_todo(todo_id: int, user_todo_name: str, session: Session) -> str:
+    # session.get(Todo, 18)
+    table_lang = select(Todo).where(Todo.todo_id == todo_id)
+    todo: Todo = session.exec(table_lang).one()
+    print(todo)
+    todo.todo_name = user_todo_name
+    session.add(todo)
+    session.commit()
+    return "Todo has updated successfully"

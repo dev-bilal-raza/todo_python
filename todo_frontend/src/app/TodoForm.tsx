@@ -20,6 +20,7 @@ const TodoForm = () => {
       },
       body: JSON.stringify(inputValue)
     })
+    
     const todos: Todo[] = await response.json()
     if (todos) {
       setTodo(todos)
